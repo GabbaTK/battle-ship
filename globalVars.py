@@ -8,6 +8,8 @@
 # 96 - Cyan
 # 97 - White
 
+import os
+
 logoBattleShip = "\033[97m██████╗░░█████╗░████████╗████████╗██╗░░░░░███████╗  ░██████╗██╗░░██╗██╗██████╗░\n██╔══██╗██╔══██╗╚══██╔══╝╚══██╔══╝██║░░░░░██╔════╝  ██╔════╝██║░░██║██║██╔══██╗\n██████╦╝███████║░░░██║░░░░░░██║░░░██║░░░░░█████╗░░  ╚█████╗░███████║██║██████╔╝\n██╔══██╗██╔══██║░░░██║░░░░░░██║░░░██║░░░░░██╔══╝░░  ░╚═══██╗██╔══██║██║██╔═══╝░\n██████╦╝██║░░██║░░░██║░░░░░░██║░░░███████╗███████╗  ██████╔╝██║░░██║██║██║░░░░░\n╚═════╝░╚═╝░░╚═╝░░░╚═╝░░░░░░╚═╝░░░╚══════╝╚══════╝  ╚═════╝░╚═╝░░╚═╝╚═╝╚═╝░░░░░\n\033[97m                  Made by \033[91mGabi\033[97m (https://github.com/GabbaTK)\n\033[97m"
 logoBattleShipDev = "\033[97m██████╗░░█████╗░████████╗████████╗██╗░░░░░███████╗  ░██████╗██╗░░██╗██╗██████╗░\n██╔══██╗██╔══██╗╚══██╔══╝╚══██╔══╝██║░░░░░██╔════╝  ██╔════╝██║░░██║██║██╔══██╗\n██████╦╝███████║░░░██║░░░░░░██║░░░██║░░░░░█████╗░░  ╚█████╗░███████║██║██████╔╝\n██╔══██╗██╔══██║░░░██║░░░░░░██║░░░██║░░░░░██╔══╝░░  ░╚═══██╗██╔══██║██║██╔═══╝░\n██████╦╝██║░░██║░░░██║░░░░░░██║░░░███████╗███████╗  ██████╔╝██║░░██║██║██║░░░░░\n╚═════╝░╚═╝░░╚═╝░░░╚═╝░░░░░░╚═╝░░░╚══════╝╚══════╝  ╚═════╝░╚═╝░░╚═╝╚═╝╚═╝░░░░░\n\033[97m                  Made by \033[91mGabi\033[97m (https://github.com/GabbaTK)\n\033[90m                                                                    ──╔╗──────────────╔╗\n                                                                    ──║║──────────────║║\n                                                                    ╔═╝╠══╦╗╔╗╔╗╔╦══╦═╝╠══╗\n                                                                    ║╔╗║║═╣╚╝║║╚╝║╔╗║╔╗║║═╣\n                                                                    ║╚╝║║═╬╗╔╝║║║║╚╝║╚╝║║═╣\n                                                                    ╚══╩══╝╚╝─╚╩╩╩══╩══╩══╝\n\033[97m"
 boardHit = "\033[97m██╗░░██╗██╗████████╗  ██████╗░░█████╗░░█████╗░██████╗░██████╗░\n██║░░██║██║╚══██╔══╝  ██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔══██╗\n███████║██║░░░██║░░░  ██████╦╝██║░░██║███████║██████╔╝██║░░██║\n██╔══██║██║░░░██║░░░  ██╔══██╗██║░░██║██╔══██║██╔══██╗██║░░██║\n██║░░██║██║░░░██║░░░  ██████╦╝╚█████╔╝██║░░██║██║░░██║██████╔╝\n╚═╝░░╚═╝╚═╝░░░╚═╝░░░  ╚═════╝░░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░\n"
@@ -26,9 +28,9 @@ def printBoardPosition(board, prntLogo):
             colorPrint = board[line][square]
 
             if board[line][square] == "+":
-                colorPrint = "\033[34m+\033[37m"
+                colorPrint = "\033[34m+\033[97m"
             elif board[line][square] == "X":
-                colorPrint = "\033[31mX\033[37m"
+                colorPrint = "\033[31mX\033[97m"
 
             print(f"{colorPrint} | ", end="")
         print()
@@ -46,7 +48,7 @@ def printBoardHit(board, prntLogo):
             colorPrint = board[line][square]
 
             if board[line][square] == "X":
-                colorPrint = "\033[31mX\033[37m"
+                colorPrint = "\033[31mX\033[97m"
 
             print(f"{colorPrint} | ", end="")
         print()
@@ -61,9 +63,10 @@ def intListToStrList(intList):
     return strList
 
 def setupShips(board):
+    shipCoords = {"4": [], "3": [], "2": [], "1": []}
     shipsLeft = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
 
-    while len(shipsLeft) > 0:
+    while len(shipsLeft) > 0:       
         printBoardPosition(board, False)
         print(f"You have ships of lenght (\033[91m{' '.join(intListToStrList(shipsLeft))}\033[97m) to be placed, place the starting and ending points seperated by a '-'")
 
@@ -71,16 +74,16 @@ def setupShips(board):
         position = position.upper()
         position = position.split("-")
 
-        if len(position) == 2:
-            if 0 < int(position[0][1]) < 11 and 0 < int(position[1][1]) < 11:
-                pass
-            else:
-                print("\033[91mThat is an invalid position, please check your ship lenght and/or position\033[97m")
-        else:
-            if 0 < int(position[0][1]) < 11:
-                pass
-            else:
-                print("\033[91mThat is an invalid position, please check your ship lenght and/or position\033[97m")
+        #if len(position) == 2:
+        #    if 0 < int(position[0][1]) < 11 and 0 < int(position[1][1]) < 11:
+        #        pass
+        #    else:
+        #        print("\033[91mThat is an invalid position, please check your ship lenght and/or position\033[97m")
+        #else:
+        #    if 0 < int(position[0][1]) < 11:
+        #        pass
+        #    else:
+        #        print("\033[91mThat is an invalid position, please check your ship lenght and/or position\033[97m")
 
         if len(position) == 1:
             position.append(position[0])
@@ -88,6 +91,7 @@ def setupShips(board):
 
             if success:
                 shipsLeft.remove(1)
+                shipCoords["1"].append(position)
 
             continue
 
@@ -100,6 +104,7 @@ def setupShips(board):
 
                 if success:
                     shipsLeft.remove(leftRightShipLenght)
+                    shipCoords[str(leftRightShipLenght)].append(position)
             else:
                 print("\033[91mThat is an invalid position, please check your ship lenght and/or position\033[97m")
         elif topBottopShipLenght != 1:
@@ -108,8 +113,11 @@ def setupShips(board):
 
                 if success:
                     shipsLeft.remove(topBottopShipLenght)
+                    shipCoords[str(topBottopShipLenght)].append(position)
             else:
                 print("\033[91mThat is an invalid position, please check your ship lenght and/or position\033[97m")
+
+        os.system("cls")
 
     return board
 
@@ -155,7 +163,7 @@ def ssPlotShips(position, shipLenght, board):
 def ssNoShipClose(board, org, lenght, rotation):
     if rotation == "h":
         shipInRange = False
-        for y in range(org[0] - 1, org[0] + 1):
+        for y in range(org[0] - 1, org[0] + 2):
             if shipInRange:
                 return not shipInRange
 
@@ -170,7 +178,7 @@ def ssNoShipClose(board, org, lenght, rotation):
     
     if rotation == "v":
         shipInRange = False
-        for y in range(org[0] - 1, org[0] + 1):
+        for y in range(org[0] - 1, org[0] + 2):
             if shipInRange:
                 return not shipInRange
 
