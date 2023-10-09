@@ -93,6 +93,7 @@ def setupShips(board):
                 shipsLeft.remove(1)
                 shipCoords["1"].append(position)
 
+            os.system("cls")
             continue
 
         leftRightShipLenght = int(position[1][1]) - int(position[0][1]) + 1
@@ -178,11 +179,11 @@ def ssNoShipClose(board, org, lenght, rotation):
     
     if rotation == "v":
         shipInRange = False
-        for y in range(org[0] - 1, org[0] + 2):
+        for y in range(org[0] - 1, org[0] + lenght + 1):
             if shipInRange:
                 return not shipInRange
 
-            for x in range(org[1] - 1, org[1] + lenght + 1):
+            for x in range(org[1] - 1, org[1] + 2):
 
                 if -1 < x < 10 and -1 < y < 10:
                     if board[y][x] == "+":
