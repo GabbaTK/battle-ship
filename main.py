@@ -4,7 +4,7 @@ import client
 import os
 
 options = "\033[97m[\033[96m1\033[97m] Start a server\n\033[97m[\033[96m2\033[97m] Connect to a server"
-optionsDev = "\033[97m[\033[96m1\033[97m] Start a server\n\033[97m[\033[96m2\033[97m] Connect to a server\n\033[97m[\033[96m3\033[97m] Exit developer mode\n\033[97m[\033[96m4\033[97m] [DEF_SHIP_POS_STATE] default ship positioning\n\033[97m[\033[96m5\033[97m] Call a server function\n\033[97m[\033[96m6\033[97m] Call a client function"
+optionsDev = "\033[97m[\033[96m1\033[97m] Start a server\n\033[97m[\033[96m2\033[97m] Connect to a server\n\033[97m[\033[96m3\033[97m] Exit developer mode\n\033[97m[\033[96m4\033[97m] [DEF_SHIP_POS_STATE] default ship positioning\n\033[97m[\033[96m5\033[97m] Call a server function\n\033[97m[\033[96m6\033[97m] Call a client function\n\033[97m[\033[96m7\033[97m] Call a helper function"
 dev = False
 defaultShipPositionState = "Enable"
 logoBattleShip = globalVars.logoBattleShip
@@ -46,6 +46,10 @@ def start(dev):
     elif selectedInput == 6 and dev:
         function = input("C_FUNC_CALL>")
         print(f"Return value: {client.funcCall(getattr(client, function))}")
+        exit()
+    elif selectedInput == 7 and dev:
+        function = input("H_FUNC_CALL>")
+        print(f"Return value: {globalVars.funcCall(getattr(globalVars, function))}")
         exit()
 
     start(dev)

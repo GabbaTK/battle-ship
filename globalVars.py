@@ -14,11 +14,17 @@ logoBattleShip = "\033[97m██████╗░░█████╗░██
 logoBattleShipDev = "\033[97m██████╗░░█████╗░████████╗████████╗██╗░░░░░███████╗  ░██████╗██╗░░██╗██╗██████╗░\n██╔══██╗██╔══██╗╚══██╔══╝╚══██╔══╝██║░░░░░██╔════╝  ██╔════╝██║░░██║██║██╔══██╗\n██████╦╝███████║░░░██║░░░░░░██║░░░██║░░░░░█████╗░░  ╚█████╗░███████║██║██████╔╝\n██╔══██╗██╔══██║░░░██║░░░░░░██║░░░██║░░░░░██╔══╝░░  ░╚═══██╗██╔══██║██║██╔═══╝░\n██████╦╝██║░░██║░░░██║░░░░░░██║░░░███████╗███████╗  ██████╔╝██║░░██║██║██║░░░░░\n╚═════╝░╚═╝░░╚═╝░░░╚═╝░░░░░░╚═╝░░░╚══════╝╚══════╝  ╚═════╝░╚═╝░░╚═╝╚═╝╚═╝░░░░░\n\033[97m                  Made by \033[91mGabi\033[97m (https://github.com/GabbaTK)\n\033[90m                                                                    ──╔╗──────────────╔╗\n                                                                    ──║║──────────────║║\n                                                                    ╔═╝╠══╦╗╔╗╔╗╔╦══╦═╝╠══╗\n                                                                    ║╔╗║║═╣╚╝║║╚╝║╔╗║╔╗║║═╣\n                                                                    ║╚╝║║═╬╗╔╝║║║║╚╝║╚╝║║═╣\n                                                                    ╚══╩══╝╚╝─╚╩╩╩══╩══╩══╝\n\033[97m"
 boardHit = "\033[97m██╗░░██╗██╗████████╗  ██████╗░░█████╗░░█████╗░██████╗░██████╗░\n██║░░██║██║╚══██╔══╝  ██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔══██╗\n███████║██║░░░██║░░░  ██████╦╝██║░░██║███████║██████╔╝██║░░██║\n██╔══██║██║░░░██║░░░  ██╔══██╗██║░░██║██╔══██║██╔══██╗██║░░██║\n██║░░██║██║░░░██║░░░  ██████╦╝╚█████╔╝██║░░██║██║░░██║██████╔╝\n╚═╝░░╚═╝╚═╝░░░╚═╝░░░  ╚═════╝░░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░\n"
 boardPosition = "\033[97m██████╗░░█████╗░░██████╗██╗████████╗██╗░█████╗░███╗░░██╗  ██████╗░░█████╗░░█████╗░██████╗░██████╗░\n██╔══██╗██╔══██╗██╔════╝██║╚══██╔══╝██║██╔══██╗████╗░██║  ██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔══██╗\n██████╔╝██║░░██║╚█████╗░██║░░░██║░░░██║██║░░██║██╔██╗██║  ██████╦╝██║░░██║███████║██████╔╝██║░░██║\n██╔═══╝░██║░░██║░╚═══██╗██║░░░██║░░░██║██║░░██║██║╚████║  ██╔══██╗██║░░██║██╔══██║██╔══██╗██║░░██║\n██║░░░░░╚█████╔╝██████╔╝██║░░░██║░░░██║╚█████╔╝██║░╚███║  ██████╦╝╚█████╔╝██║░░██║██║░░██║██████╔╝\n╚═╝░░░░░░╚════╝░╚═════╝░╚═╝░░░╚═╝░░░╚═╝░╚════╝░╚═╝░░╚══╝  ╚═════╝░░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░\n"
+boardOtherPlayerPosition = "\033[97m░█████╗░████████╗██╗░░██╗███████╗██████╗░  ██████╗░██╗░░░░░░█████╗░██╗░░░██╗███████╗██████╗░░██████╗ ██████╗░░█████╗░░█████╗░██████╗░██████╗░\n██╔══██╗╚══██╔══╝██║░░██║██╔════╝██╔══██╗  ██╔══██╗██║░░░░░██╔══██╗╚██╗░██╔╝██╔════╝██╔══██╗██╔════╝ ██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔══██╗\n██║░░██║░░░██║░░░███████║█████╗░░██████╔╝  ██████╔╝██║░░░░░███████║░╚████╔╝░█████╗░░██████╔╝╚█████╗░ ██████╦╝██║░░██║███████║██████╔╝██║░░██║\n██║░░██║░░░██║░░░██╔══██║██╔══╝░░██╔══██╗  ██╔═══╝░██║░░░░░██╔══██║░░╚██╔╝░░██╔══╝░░██╔══██╗░╚═══██╗ ██╔══██╗██║░░██║██╔══██║██╔══██╗██║░░██║\n╚█████╔╝░░░██║░░░██║░░██║███████╗██║░░██║  ██║░░░░░███████╗██║░░██║░░░██║░░░███████╗██║░░██║██████╔╝ ██████╦╝╚█████╔╝██║░░██║██║░░██║██████╔╝\n░╚════╝░░░░╚═╝░░░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝  ╚═╝░░░░░╚══════╝╚═╝░░╚═╝░░░╚═╝░░░╚══════╝╚═╝░░╚═╝╚═════╝░ ╚═════╝░░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░\n"
 letterSet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 
-def printBoardPosition(board, prntLogo):
-    if prntLogo:
+def funcCall(func):
+    return func()
+
+def printBoardPosition(board, prntLogo, otherPlayersBoard=False):
+    if prntLogo and not otherPlayersBoard:
         print(boardPosition)
+    if prntLogo and otherPlayersBoard:
+        print(boardOtherPlayerPosition)
 
     print("    1   2   3   4   5   6   7   8   9   10")
     print("  -----------------------------------------")
@@ -73,6 +79,9 @@ def setupShips(board):
         position = input(">")
         position = position.upper()
         position = position.split("-")
+        position[0] = [position[0][0], position[0][1:]]
+        if len(position) == 2:
+            position[1] = [position[1][0], position[1][1:]]
 
         #if len(position) == 2:
         #    if 0 < int(position[0][1]) < 11 and 0 < int(position[1][1]) < 11:
@@ -86,14 +95,15 @@ def setupShips(board):
         #        print("\033[91mThat is an invalid position, please check your ship lenght and/or position\033[97m")
 
         if len(position) == 1:
+            os.system("cls")
+
             position.append(position[0])
             success = ssPlotShips(position, 1, board)
 
             if success:
                 shipsLeft.remove(1)
-                shipCoords["1"].append(position)
+                shipCoords["1"].append(position[0])
 
-            os.system("cls")
             continue
 
         leftRightShipLenght = int(position[1][1]) - int(position[0][1]) + 1
@@ -105,7 +115,10 @@ def setupShips(board):
 
                 if success:
                     shipsLeft.remove(leftRightShipLenght)
-                    shipCoords[str(leftRightShipLenght)].append(position)
+
+                    for point in range(int(position[0][1]), int(position[1][1])):
+                        shipCoords[str(leftRightShipLenght)].append([position[0][0], str(point)])
+                    shipCoords[str(leftRightShipLenght)].append(position[1])
             else:
                 print("\033[91mThat is an invalid position, please check your ship lenght and/or position\033[97m")
         elif topBottopShipLenght != 1:
@@ -114,13 +127,16 @@ def setupShips(board):
 
                 if success:
                     shipsLeft.remove(topBottopShipLenght)
-                    shipCoords[str(topBottopShipLenght)].append(position)
+
+                    for point in range(letterSet.index(position[0][0]), letterSet.index(position[1][0])):
+                        shipCoords[str(topBottopShipLenght)].append([letterSet[point], str(position[0][1])])
+                    shipCoords[str(topBottopShipLenght)].append([position[1]])
             else:
                 print("\033[91mThat is an invalid position, please check your ship lenght and/or position\033[97m")
 
         os.system("cls")
 
-    return board
+    return board, shipCoords
 
 def ssPlotShips(position, shipLenght, board):
     if position[0][0] == position[1][0]:

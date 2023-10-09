@@ -37,10 +37,20 @@ piecesLeft = {"4":1,
               "3":2,
               "2":3,
               "1":4}
+shipCoords = {}
 letterSet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 
 def funcCall(func):
-    func()
+    return func()
+
+def tableDataToTable(formatedData):
+    convertedTable = []
+
+    formatedData = formatedData.split("-")
+    for line in formatedData:
+        convertedTable.append(list(line))
+
+    return convertedTable
 
 def setupShips():
     global serverPositionBoard
@@ -68,6 +78,16 @@ def init(dev, defaultShipPosition):
 
     playerConnection, address = connectionManager.awaitConnection(10800)
 
+    connectionManager.serverSendData(playerConnection, f"CONN_DEV_{str(dev).upper()}")
+
+    print("Joining in progress...")
+
+    clientJoinConfirmation = connectionManager.serverReceiveData(playerConnection)
+
+    if clientJoinConfirmation == "CONN_DEV_DEN":
+        print("Player has denied joining this server, maybe because you are running in developer mode")
+        exit()
+
     print(f"New connection for {address[0]}")
     print("\033[97mGame is starting \033[96msoon\033[97m")
     time.sleep(5)
@@ -86,10 +106,81 @@ def init(dev, defaultShipPosition):
                                [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
                                ["+", " ", "+", " ", "+", " ", "+", " ", " ", " "]]
     else:
-        setupShips()
+        serverPositionBoard, shipCoords = setupShips()
 
     print("Waiting for ther person...")
     connectionManager.requestSyncS(playerConnection)
+
+    os.system("cls")
+
+    gameLoop(dev, playerConnection)
+
+def gameLoop(dev, playerConnection):
+    while True:
+        if dev:
+            connectionManager.serverSendData(playerConnection, "DEV_STAT_BOARD")
+            formatedPlayerPositionBoard = connectionManager.serverReceiveData(playerConnection)
+            playerPositionBoard = tableDataToTable(formatedPlayerPositionBoard)
+
+            globalVars.printBoardPosition(playerPositionBoard, True, True)
+            print()
+
+        globalVars.printBoardHit(serverHitBoard, True)
+        print()
+        globalVars.printBoardPosition(serverPositionBoard, True)
+        print("Where do you want to shoot")
+        hitPosition = input(">")
+        hitPosition = hitPosition.upper()
+
+        shootPoint = list(hitPosition)
+        shootPoint = [shootPoint[0], int("".join(shootPoint[1:]))]
+        shootPoint = [letterSet.index(shootPoint[0]), shootPoint[1] - 1]
+        
+        connectionManager.serverSendData(playerConnection, f"SHOOT_TEST_{str(shootPoint[0]) + str(shootPoint[1])}")
+        hitMiss = connectionManager.serverReceiveData(playerConnection)
+        
+        if hitMiss == "SHOOT_ACK_HIT":
+            serverHitBoard[shootPoint[0]][shootPoint[1]] = "X"
+        elif hitMiss == "SHOOT_ACK_MISS":
+            serverHitBoard[shootPoint[0]][shootPoint[1]] = "#"
+
+        os.system("cls")
+        if dev:
+            connectionManager.serverSendData(playerConnection, "DEV_STAT_BOARD")
+            formatedPlayerPositionBoard = connectionManager.serverReceiveData(playerConnection)
+            playerPositionBoard = tableDataToTable(formatedPlayerPositionBoard)
+
+            globalVars.printBoardPosition(playerPositionBoard, True, True)
+            print()
+            
+        globalVars.printBoardHit(serverHitBoard, True)
+        print()
+        globalVars.printBoardPosition(serverPositionBoard, True)
+
+        connectionManager.serverSendData(playerConnection, "SHOOT_TURN_NEXT")
+        enemyShootPoint = connectionManager.serverReceiveData(playerConnection)
+
+        data = enemyShootPoint.split("_")
+
+        shootPoint = data[-1]
+        shootPoint = list(shootPoint)
+        shootPoint = [int(shootPoint[0]), int(shootPoint[1])]
+
+        if serverPositionBoard[shootPoint[0]][shootPoint[1]] == "+":
+            serverPositionBoard[shootPoint[0]][shootPoint[1]] = "X"
+
+            connectionManager.serverSendData(playerConnection, "SHOOT_ACK_HIT")
+
+        elif serverPositionBoard[shootPoint[0]][shootPoint[1]] == "X":
+            connectionManager.serverSendData(playerConnection, "SHOOT_ACK_HIT")
+
+        elif serverPositionBoard[shootPoint[0]][shootPoint[1]] == "#":
+            connectionManager.serverSendData(playerConnection, "SHOOT_ACK_MISS")
+
+        elif serverPositionBoard[shootPoint[0]][shootPoint[1]] == " ":
+            serverPositionBoard[shootPoint[0]][shootPoint[1]] = "#"
+
+            connectionManager.serverSendData(playerConnection, "SHOOT_ACK_MISS")
 
 if __name__ == "__main__":
     init()

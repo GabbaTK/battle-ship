@@ -46,16 +46,24 @@ def serverReceiveData(connection):
         exit()
 
 def clientSendData(msg):
-    msg = msg.encode(format)
-    msgLength = str(len(msg)).encode(format) + b" " * (header - (len(str(len(msg)).encode(format))))
-    tmpSocket.send(msgLength)
-    tmpSocket.send(msg)
+    try:
+        msg = msg.encode(format)
+        msgLength = str(len(msg)).encode(format) + b" " * (header - (len(str(len(msg)).encode(format))))
+        tmpSocket.send(msgLength)
+        tmpSocket.send(msg)
+    except ConnectionAbortedError:
+        print("The connection was unexpectadly terminated")
+        exit()
 
 def clientReceiveData():
-    legnth = tmpSocket.recv(header).decode(format)
-    data = tmpSocket.recv(int(legnth)).decode(format)
+    try:
+        legnth = tmpSocket.recv(header).decode(format)
+        data = tmpSocket.recv(int(legnth)).decode(format)
 
-    return data
+        return data
+    except ValueError:
+        print("The connection was unexpectadly terminated")
+        exit()
 
 def requestSyncS(connection):
     serverSendData(connection, "SYNC")
