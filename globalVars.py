@@ -71,10 +71,25 @@ def setupShips(board):
         position = position.upper()
         position = position.split("-")
 
+        if len(position) == 2:
+            if 0 < int(position[0][1]) < 11 and 0 < int(position[1][1]) < 11:
+                pass
+            else:
+                print("\033[91mThat is an invalid position, please check your ship lenght and/or position\033[97m")
+        else:
+            if 0 < int(position[0][1]) < 11:
+                pass
+            else:
+                print("\033[91mThat is an invalid position, please check your ship lenght and/or position\033[97m")
+
         if len(position) == 1:
             position.append(position[0])
-            ssPlotShips(position, 1, board)
-            shipsLeft.remove(1)
+            success = ssPlotShips(position, 1, board)
+
+            if success:
+                shipsLeft.remove(1)
+
+            continue
 
         leftRightShipLenght = int(position[1][1]) - int(position[0][1]) + 1
         topBottopShipLenght = letterSet.index(position[1][0]) - letterSet.index(position[0][0]) + 1
