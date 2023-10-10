@@ -111,76 +111,109 @@ def init(dev, defaultShipPosition):
     print("Waiting for ther person...")
     connectionManager.requestSyncS(playerConnection)
 
-    os.system("cls")
-
     gameLoop(dev, playerConnection)
 
 def gameLoop(dev, playerConnection):
     while True:
-        if dev:
-            connectionManager.serverSendData(playerConnection, "DEV_STAT_BOARD")
-            formatedPlayerPositionBoard = connectionManager.serverReceiveData(playerConnection)
-            playerPositionBoard = tableDataToTable(formatedPlayerPositionBoard)
-
-            globalVars.printBoardPosition(playerPositionBoard, True, True)
-            print()
-
-        globalVars.printBoardHit(serverHitBoard, True)
-        print()
-        globalVars.printBoardPosition(serverPositionBoard, True)
-        print("Where do you want to shoot")
-        hitPosition = input(">")
-        hitPosition = hitPosition.upper()
-
-        shootPoint = list(hitPosition)
-        shootPoint = [shootPoint[0], int("".join(shootPoint[1:]))]
-        shootPoint = [letterSet.index(shootPoint[0]), shootPoint[1] - 1]
-        
-        connectionManager.serverSendData(playerConnection, f"SHOOT_TEST_{str(shootPoint[0]) + str(shootPoint[1])}")
-        hitMiss = connectionManager.serverReceiveData(playerConnection)
-        
-        if hitMiss == "SHOOT_ACK_HIT":
-            serverHitBoard[shootPoint[0]][shootPoint[1]] = "X"
-        elif hitMiss == "SHOOT_ACK_MISS":
-            serverHitBoard[shootPoint[0]][shootPoint[1]] = "#"
-
         os.system("cls")
-        if dev:
-            connectionManager.serverSendData(playerConnection, "DEV_STAT_BOARD")
-            formatedPlayerPositionBoard = connectionManager.serverReceiveData(playerConnection)
-            playerPositionBoard = tableDataToTable(formatedPlayerPositionBoard)
 
-            globalVars.printBoardPosition(playerPositionBoard, True, True)
+        while True:
+            if dev:
+                connectionManager.serverSendData(playerConnection, "DEV_STAT_BOARD")
+                formatedPlayerPositionBoard = connectionManager.serverReceiveData(playerConnection)
+                playerPositionBoard = tableDataToTable(formatedPlayerPositionBoard)
+
+                globalVars.printBoardPosition(playerPositionBoard, True, True)
+                print()
+
+            globalVars.printBoardHit(serverHitBoard, True)
             print()
+            globalVars.printBoardPosition(serverPositionBoard, True)
+            print("Where do you want to shoot")
+            hitPosition = input(">")
+            hitPosition = hitPosition.upper()
+
+            shootPoint = list(hitPosition)
+            shootPoint = [shootPoint[0], int("".join(shootPoint[1:]))]
+            shootPoint = [letterSet.index(shootPoint[0]), shootPoint[1] - 1]
             
-        globalVars.printBoardHit(serverHitBoard, True)
-        print()
-        globalVars.printBoardPosition(serverPositionBoard, True)
+            connectionManager.serverSendData(playerConnection, f"SHOOT_TEST_{str(shootPoint[0]) + str(shootPoint[1])}")
+            hitMiss = connectionManager.serverReceiveData(playerConnection)
+
+            os.system("cls")
+            
+            if hitMiss == "SHOOT_ACK_HIT":
+                os.system("cls")
+
+                serverHitBoard[shootPoint[0]][shootPoint[1]] = "X"
+
+                print(globalVars.logoHit)
+                print()
+            elif hitMiss == "SHOOT_ACK_MISS":
+                os.system("cls")
+
+                serverHitBoard[shootPoint[0]][shootPoint[1]] = "#"
+
+                print(globalVars.LogoMiss)
+                print()
+
+                if dev:
+                    connectionManager.serverSendData(playerConnection, "DEV_STAT_BOARD")
+                    formatedPlayerPositionBoard = connectionManager.serverReceiveData(playerConnection)
+                    playerPositionBoard = tableDataToTable(formatedPlayerPositionBoard)
+
+                    globalVars.printBoardPosition(playerPositionBoard, True, True)
+                    print()
+
+                globalVars.printBoardHit(serverHitBoard, True)
+                print()
+                globalVars.printBoardPosition(serverPositionBoard, True)
+
+                break
 
         connectionManager.serverSendData(playerConnection, "SHOOT_TURN_NEXT")
-        enemyShootPoint = connectionManager.serverReceiveData(playerConnection)
 
-        data = enemyShootPoint.split("_")
+        while True:
+            #os.system("cls")
 
-        shootPoint = data[-1]
-        shootPoint = list(shootPoint)
-        shootPoint = [int(shootPoint[0]), int(shootPoint[1])]
+            data = connectionManager.serverReceiveData(playerConnection)
 
-        if serverPositionBoard[shootPoint[0]][shootPoint[1]] == "+":
-            serverPositionBoard[shootPoint[0]][shootPoint[1]] = "X"
+            if data == "SHOOT_TURN_NEXT":
+                break
 
-            connectionManager.serverSendData(playerConnection, "SHOOT_ACK_HIT")
+            data = data.split("_")
 
-        elif serverPositionBoard[shootPoint[0]][shootPoint[1]] == "X":
-            connectionManager.serverSendData(playerConnection, "SHOOT_ACK_HIT")
+            shootPoint = data[-1]
+            shootPoint = list(shootPoint)
+            shootPoint = [int(shootPoint[0]), int(shootPoint[1])]
 
-        elif serverPositionBoard[shootPoint[0]][shootPoint[1]] == "#":
-            connectionManager.serverSendData(playerConnection, "SHOOT_ACK_MISS")
+            if serverPositionBoard[shootPoint[0]][shootPoint[1]] == "+":
+                os.system("cls")
 
-        elif serverPositionBoard[shootPoint[0]][shootPoint[1]] == " ":
-            serverPositionBoard[shootPoint[0]][shootPoint[1]] = "#"
+                serverPositionBoard[shootPoint[0]][shootPoint[1]] = "X"
 
-            connectionManager.serverSendData(playerConnection, "SHOOT_ACK_MISS")
+                print(globalVars.opponentHitYou)
+                print()
+                globalVars.printBoardPosition(serverPositionBoard, False)
+
+                connectionManager.serverSendData(playerConnection, "SHOOT_ACK_HIT")
+
+            elif serverPositionBoard[shootPoint[0]][shootPoint[1]] == "X":
+                os.system("cls")
+
+                print(globalVars.opponentHitYou)
+                print()
+                globalVars.printBoardPosition(serverPositionBoard, False)
+
+                connectionManager.serverSendData(playerConnection, "SHOOT_ACK_HIT")
+
+            elif serverPositionBoard[shootPoint[0]][shootPoint[1]] == "#":
+                connectionManager.serverSendData(playerConnection, "SHOOT_ACK_MISS")
+
+            elif serverPositionBoard[shootPoint[0]][shootPoint[1]] == " ":
+                serverPositionBoard[shootPoint[0]][shootPoint[1]] = "#"
+
+                connectionManager.serverSendData(playerConnection, "SHOOT_ACK_MISS")
 
 if __name__ == "__main__":
     init()

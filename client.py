@@ -132,6 +132,12 @@ def init(defaultShipPosition):
 
 def gameLoop():
     while True:
+        #os.system("cls")
+
+        #globalVars.printBoardHit(playerHitBoard, True)
+        #print()
+        #globalVars.printBoardPosition(playerPositionBoard, True)
+
         data = connectionManager.clientReceiveData()
 
         if data == "DEV_STAT_BOARD":
@@ -144,11 +150,23 @@ def gameLoop():
             shootPoint = [int(shootPoint[0]), int(shootPoint[1])]
 
             if playerPositionBoard[shootPoint[0]][shootPoint[1]] == "+":
+                os.system("cls")
+
                 playerPositionBoard[shootPoint[0]][shootPoint[1]] = "X"
+
+                print(globalVars.opponentHitYou)
+                print()
+                globalVars.printBoardPosition(playerPositionBoard, False)
 
                 connectionManager.clientSendData("SHOOT_ACK_HIT")
 
             elif playerPositionBoard[shootPoint[0]][shootPoint[1]] == "X":
+                os.system("cls")
+
+                print(globalVars.opponentHitYou)
+                print()
+                globalVars.printBoardPosition(playerPositionBoard, False)
+
                 connectionManager.clientSendData("SHOOT_ACK_HIT")
 
             elif playerPositionBoard[shootPoint[0]][shootPoint[1]] == "#":
@@ -161,24 +179,41 @@ def gameLoop():
         elif data == "SHOOT_TURN_NEXT":
             os.system("cls")
 
-            globalVars.printBoardHit(playerHitBoard, True)
-            print()
-            globalVars.printBoardPosition(playerPositionBoard, True)
-            print("Where do you want to shoot")
-            hitPosition = input(">")
-            hitPosition = hitPosition.upper()
+            while True:
+                globalVars.printBoardHit(playerHitBoard, True)
+                print()
+                globalVars.printBoardPosition(playerPositionBoard, True)
+                print("Where do you want to shoot")
+                hitPosition = input(">")
+                hitPosition = hitPosition.upper()
 
-            shootPoint = list(hitPosition)
-            shootPoint = [shootPoint[0], int("".join(shootPoint[1:]))]
-            shootPoint = [letterSet.index(shootPoint[0]), shootPoint[1] - 1]
+                shootPoint = list(hitPosition)
+                shootPoint = [shootPoint[0], int("".join(shootPoint[1:]))]
+                shootPoint = [letterSet.index(shootPoint[0]), shootPoint[1] - 1]
 
-            connectionManager.clientSendData(f"SHOOT_TEST_{str(hitPosition[0]) + str(hitPosition[1])}")
-            hitMiss = connectionManager.clientReceiveData()
+                connectionManager.clientSendData(f"SHOOT_TEST_{str(shootPoint[0]) + str(shootPoint[1])}")
+                hitMiss = connectionManager.clientReceiveData()
 
-            if hitMiss == "SHOOT_ACK_HIT":
-                playerHitBoard[shootPoint[0]][shootPoint[1]] = "X"
-            elif hitMiss == "SHOOT_ACK_MISS":
-                playerHitBoard[shootPoint[0]][shootPoint[1]] = "#"
+                if hitMiss == "SHOOT_ACK_HIT":
+                    os.system("cls")
+
+                    playerHitBoard[shootPoint[0]][shootPoint[1]] = "X"
+
+                    print(globalVars.logoHit)
+                    print()                    
+                elif hitMiss == "SHOOT_ACK_MISS":
+                    os.system("cls")
+
+                    playerHitBoard[shootPoint[0]][shootPoint[1]] = "#"
+
+                    print(globalVars.LogoMiss)
+                    print()
+                    globalVars.printBoardHit(playerHitBoard, True)
+                    print()
+                    globalVars.printBoardPosition(playerPositionBoard, True)
+
+                    connectionManager.clientSendData("SHOOT_TURN_NEXT")
+                    break
 
 if __name__ == "__main__":
     init()
