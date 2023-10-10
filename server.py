@@ -55,8 +55,10 @@ def tableDataToTable(formatedData):
 def setupShips():
     global serverPositionBoard
 
-    returnBoard = globalVars.setupShips(serverPositionBoard)
+    returnBoard, returnCoords = globalVars.setupShips(serverPositionBoard)
     serverPositionBoard = returnBoard
+
+    return returnBoard, returnCoords
 
 def init(dev, defaultShipPosition):
     global serverPositionBoard

@@ -58,8 +58,10 @@ def sendTable():
 def setupShips():
     global playerPositionBoard
 
-    returnBoard = globalVars.setupShips(playerPositionBoard)
+    returnBoard, returnCoords = globalVars.setupShips(playerPositionBoard)
     playerPositionBoard = returnBoard
+
+    return returnBoard, returnCoords
 
 def init(defaultShipPosition):
     global playerPositionBoard
