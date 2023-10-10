@@ -33,10 +33,6 @@ serverHitBoard = [[" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
                          [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
                          [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
                          [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "]]
-piecesLeft = {"4":1,
-              "3":2,
-              "2":3,
-              "1":4}
 shipCoords = {}
 letterSet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 
@@ -64,6 +60,7 @@ def init(dev, defaultShipPosition):
     global serverPositionBoard
     global boardHitText
     global boardPositionText
+    global shipCoords
 
     os.system("cls")
 
@@ -107,6 +104,7 @@ def init(dev, defaultShipPosition):
                                ["+", " ", "+", " ", " ", " ", " ", " ", " ", " "],
                                [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
                                ["+", " ", "+", " ", "+", " ", "+", " ", " ", " "]]
+        shipCoords = {"4": [["A1", "B1", "C1", "D1"]], "3": [["F1", "G1", "H1"], ["F3", "G3", "H3"]], "2": [["A3", "B3"], ["A5", "B5"], ["A7", "B7"]], "1": [["J1"], ["J3"], ["J5"], ["J7"]]}
     else:
         serverPositionBoard, shipCoords = setupShips()
 
@@ -124,6 +122,8 @@ def gameLoop(dev, playerConnection):
                 connectionManager.serverSendData(playerConnection, "DEV_STAT_BOARD")
                 formatedPlayerPositionBoard = connectionManager.serverReceiveData(playerConnection)
                 playerPositionBoard = tableDataToTable(formatedPlayerPositionBoard)
+                connectionManager.serverSendData(playerConnection, "DEV_STAT_SHIPS")
+                enemyShipsLeft = connectionManager.serverReceiveData(playerConnection)
 
                 globalVars.printBoardPosition(playerPositionBoard, True, True)
                 print()
@@ -141,6 +141,7 @@ def gameLoop(dev, playerConnection):
             
             connectionManager.serverSendData(playerConnection, f"SHOOT_TEST_{str(shootPoint[0]) + str(shootPoint[1])}")
             hitMiss = connectionManager.serverReceiveData(playerConnection)
+            shipDestroyed = connectionManager.serverReceiveData(playerConnection)
 
             os.system("cls")
             
@@ -151,6 +152,10 @@ def gameLoop(dev, playerConnection):
 
                 print(globalVars.logoHit)
                 print()
+
+                if shipDestroyed == "SHOOT_SHIP_DEST":
+                    print(globalVars.enemyShipDestroyed)
+                    print()
             elif hitMiss == "SHOOT_ACK_MISS":
                 os.system("cls")
 
@@ -198,7 +203,18 @@ def gameLoop(dev, playerConnection):
                 print()
                 globalVars.printBoardPosition(serverPositionBoard, False)
 
+                coordsShootPoint = letterSet[shootPoint[0]] + str(shootPoint[1] + 1)
+                shipDestroyed = "SHOOT_SHIP_NDEST"
+                for shipLenght in shipCoords:
+                    for shipIndex, ship in enumerate(shipCoords[shipLenght]):
+                        if coordsShootPoint in ship:
+                            shipCoords[shipLenght][shipIndex].remove(coordsShootPoint)
+
+                            if len(shipCoords[shipLenght][shipIndex]) == 0:
+                                shipDestroyed = "SHOOT_SHIP_DEST"
+
                 connectionManager.serverSendData(playerConnection, "SHOOT_ACK_HIT")
+                connectionManager.serverSendData(playerConnection, shipDestroyed)
 
             elif serverPositionBoard[shootPoint[0]][shootPoint[1]] == "X":
                 os.system("cls")
@@ -208,14 +224,17 @@ def gameLoop(dev, playerConnection):
                 globalVars.printBoardPosition(serverPositionBoard, False)
 
                 connectionManager.serverSendData(playerConnection, "SHOOT_ACK_HIT")
+                connectionManager.serverSendData(playerConnection, "SHOOT_SHIP_NDEST")
 
             elif serverPositionBoard[shootPoint[0]][shootPoint[1]] == "#":
                 connectionManager.serverSendData(playerConnection, "SHOOT_ACK_MISS")
+                connectionManager.serverSendData(playerConnection, "SHOOT_SHIP_NDEST")
 
             elif serverPositionBoard[shootPoint[0]][shootPoint[1]] == " ":
                 serverPositionBoard[shootPoint[0]][shootPoint[1]] = "#"
 
                 connectionManager.serverSendData(playerConnection, "SHOOT_ACK_MISS")
+                connectionManager.serverSendData(playerConnection, "SHOOT_SHIP_NDEST")
 
 if __name__ == "__main__":
     init()

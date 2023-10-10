@@ -26,14 +26,14 @@ def connect(ip, port):
     tmpSocket.connect(addr)
 
 def serverSendData(connection, msg):
-    try:
-        msg = msg.encode(format)
-        msgLenght = str(len(msg)).encode(format) + b" " * (header - (len(str(len(msg)).encode(format))))
-        connection.send(msgLenght)
-        connection.send(msg)
-    except:
-        print("The connection was unexpectadly terminated")
-        exit()
+    #try:
+    msg = msg.encode(format)
+    msgLenght = str(len(msg)).encode(format) + b" " * (header - (len(str(len(msg)).encode(format))))
+    connection.send(msgLenght)
+    connection.send(msg)
+    #except:
+    #    print("The connection was unexpectadly terminated")
+    #    exit()
 
 def serverReceiveData(connection):
     try:

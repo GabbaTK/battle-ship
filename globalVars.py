@@ -19,6 +19,9 @@ letterSet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 logoHit = "\033[91m█░█ █ ▀█▀\n█▀█ █ ░█░\033[97m"
 LogoMiss = "\033[91m█▀▄▀█ █ █▀ █▀\n█░▀░█ █ ▄█ ▄█\033[97m"
 opponentHitYou = "\033[91m▀▀█▀▀ ▒█░▒█ ▒█▀▀▀ 　 ▒█▀▀▀█ ▒█▀▀█ ▒█▀▀█ ▒█▀▀▀█ ▒█▄░▒█ ▒█▀▀▀ ▒█▄░▒█ ▀▀█▀▀ 　 ▒█░▒█ ▀█▀ ▀▀█▀▀ 　 ▒█░░▒█ ▒█▀▀▀█ ▒█░▒█\n░▒█░░ ▒█▀▀█ ▒█▀▀▀ 　 ▒█░░▒█ ▒█▄▄█ ▒█▄▄█ ▒█░░▒█ ▒█▒█▒█ ▒█▀▀▀ ▒█▒█▒█ ░▒█░░ 　 ▒█▀▀█ ▒█░ ░▒█░░ 　 ▒█▄▄▄█ ▒█░░▒█ ▒█░▒█\n░▒█░░ ▒█░▒█ ▒█▄▄▄ 　 ▒█▄▄▄█ ▒█░░░ ▒█░░░ ▒█▄▄▄█ ▒█░░▀█ ▒█▄▄▄ ▒█░░▀█ ░▒█░░ 　 ▒█░▒█ ▄█▄ ░▒█░░ 　 ░░▒█░░ ▒█▄▄▄█ ░▀▄▄▀\033[97m"
+youWin = "\033[97m██╗░░░██╗░█████╗░██╗░░░██╗  ░██╗░░░░░░░██╗██╗███╗░░██╗\n╚██╗░██╔╝██╔══██╗██║░░░██║  ░██║░░██╗░░██║██║████╗░██║\n░╚████╔╝░██║░░██║██║░░░██║  ░╚██╗████╗██╔╝██║██╔██╗██║\n░░╚██╔╝░░██║░░██║██║░░░██║  ░░████╔═████║░██║██║╚████║\n░░░██║░░░╚█████╔╝╚██████╔╝  ░░╚██╔╝░╚██╔╝░██║██║░╚███║\n░░░╚═╝░░░░╚════╝░░╚═════╝░  ░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚══╝"
+youLose = "\033[97m██╗░░░██╗░█████╗░██╗░░░██╗  ██╗░░░░░░█████╗░░██████╗███████╗\n╚██╗░██╔╝██╔══██╗██║░░░██║  ██║░░░░░██╔══██╗██╔════╝██╔════╝\n░╚████╔╝░██║░░██║██║░░░██║  ██║░░░░░██║░░██║╚█████╗░█████╗░░\n░░╚██╔╝░░██║░░██║██║░░░██║  ██║░░░░░██║░░██║░╚═══██╗██╔══╝░░\n░░░██║░░░╚█████╔╝╚██████╔╝  ███████╗╚█████╔╝██████╔╝███████╗\n░░░╚═╝░░░░╚════╝░░╚═════╝░  ╚══════╝░╚════╝░╚═════╝░╚══════╝"
+enemyShipDestroyed = "\033[91m█▀▀ █▄░█ █▀▀ █▀▄▀█ █▄█   █▀ █░█ █ █▀█   █▀▄ █▀▀ █▀ ▀█▀ █▀█ █▀█ █▄█ █▀▀ █▀▄\n██▄ █░▀█ ██▄ █░▀░█ ░█░   ▄█ █▀█ █ █▀▀   █▄▀ ██▄ ▄█ ░█░ █▀▄ █▄█ ░█░ ██▄ █▄▀"
 
 def funcCall(func):
     return func()
@@ -119,9 +122,10 @@ def setupShips(board):
                 if success:
                     shipsLeft.remove(leftRightShipLenght)
 
+                    shipCoords[str(leftRightShipLenght)].append([])
                     for point in range(int(position[0][1]), int(position[1][1])):
-                        shipCoords[str(leftRightShipLenght)].append([position[0][0], str(point)])
-                    shipCoords[str(leftRightShipLenght)].append(position[1])
+                        shipCoords[str(leftRightShipLenght)][-1].append(position[0][0] + str(point))
+                    shipCoords[str(leftRightShipLenght)][-1].append(position[1])
             else:
                 print("\033[91mThat is an invalid position, please check your ship lenght and/or position\033[97m")
         elif topBottopShipLenght != 1:
@@ -131,9 +135,10 @@ def setupShips(board):
                 if success:
                     shipsLeft.remove(topBottopShipLenght)
 
+                    shipCoords[str(topBottopShipLenght)].append([])
                     for point in range(letterSet.index(position[0][0]), letterSet.index(position[1][0])):
-                        shipCoords[str(topBottopShipLenght)].append([letterSet[point], str(position[0][1])])
-                    shipCoords[str(topBottopShipLenght)].append([position[1]])
+                        shipCoords[str(topBottopShipLenght)][-1].append(letterSet[point] + str(position[0][1]))
+                    shipCoords[str(topBottopShipLenght)][-1].append(position[1])
             else:
                 print("\033[91mThat is an invalid position, please check your ship lenght and/or position\033[97m")
 
@@ -196,7 +201,7 @@ def ssNoShipClose(board, org, lenght, rotation):
 
         return not shipInRange
     
-    if rotation == "v":
+    elif rotation == "v":
         shipInRange = False
         for y in range(org[0] - 1, org[0] + lenght + 1):
             if shipInRange:
@@ -210,3 +215,20 @@ def ssNoShipClose(board, org, lenght, rotation):
                         break
 
         return not shipInRange
+
+def shipDestroyedSurroundBlank(board, org, lenght, rotation):
+    if rotation == "h":
+        for y in range(org[0] - 1, org[0] + 2):
+            for x in range(org[1] - 1, org[1] + lenght + 1):
+                if -1 < x < 10 and -1 < y < 10:
+                    if board[y][x] != "X":
+                        board[y][x] = "#"
+    
+    elif rotation == "v":
+        for y in range(org[0] - 1, org[0] + lenght + 1):
+            for x in range(org[1] - 1, org[1] + 2):
+                if -1 < x < 10 and -1 < y < 10:
+                    if board[y][x] != "X":
+                        board[y][x] = "#"
+
+    return board

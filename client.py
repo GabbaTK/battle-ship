@@ -23,10 +23,6 @@ playerHitBoard = [[" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
                          [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
                          [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
                          [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "]]
-piecesLeft = {"4":1,
-              "3":2,
-              "2":3,
-              "1":4}
 letterSet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 shipCoords = {}
 warning = """\033[91m
@@ -55,6 +51,17 @@ def sendTable():
 
     return convertedTable
 
+def sendShipsData():
+    convertedShips = ""
+
+    for shipLenght in shipCoords:
+        for ship in shipCoords[shipLenght]:
+            convertedShips += "_".join(ship)
+            convertedShips += "-"
+        convertedShips += ":"
+
+    return convertedShips
+
 def setupShips():
     global playerPositionBoard
 
@@ -67,6 +74,7 @@ def init(defaultShipPosition):
     global playerPositionBoard
     global boardHitText
     global boardPositionText
+    global shipCoords
 
     os.system("cls")
 
@@ -118,6 +126,7 @@ def init(defaultShipPosition):
                                ["+", " ", "+", " ", " ", " ", " ", " ", " ", " "],
                                [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
                                ["+", " ", "+", " ", "+", " ", "+", " ", " ", " "]]
+        shipCoords = {"4": [["A1", "B1", "C1", "D1"]], "3": [["F1", "G1", "H1"], ["F3", "G3", "H3"]], "2": [["A3", "B3"], ["A5", "B5"], ["A7", "B7"]], "1": [["J1"], ["J3"], ["J5"], ["J7"]]}
     else:
         playerPositionBoard, shipCoords = setupShips()
 
@@ -144,6 +153,8 @@ def gameLoop():
 
         if data == "DEV_STAT_BOARD":
             connectionManager.clientSendData(sendTable())
+        elif data == "DEV_STAT_SHIPS":
+            connectionManager.clientSendData(sendShipsData())
         elif data.startswith("SHOOT_TEST"):
             data = data.split("_")
 
@@ -160,7 +171,18 @@ def gameLoop():
                 print()
                 globalVars.printBoardPosition(playerPositionBoard, False)
 
+                coordsShootPoint = letterSet[shootPoint[0]] + str(shootPoint[1] + 1)
+                shipDestroyed = "SHOOT_SHIP_NDEST"
+                for shipLenght in shipCoords:
+                    for shipIndex, ship in enumerate(shipCoords[shipLenght]):
+                        if coordsShootPoint in ship:
+                            shipCoords[shipLenght][shipIndex].remove(coordsShootPoint)
+
+                            if len(shipCoords[shipLenght][shipIndex]) == 0:
+                                shipDestroyed = "SHOOT_SHIP_DEST"
+
                 connectionManager.clientSendData("SHOOT_ACK_HIT")
+                connectionManager.clientSendData(shipDestroyed)
 
             elif playerPositionBoard[shootPoint[0]][shootPoint[1]] == "X":
                 os.system("cls")
@@ -170,14 +192,17 @@ def gameLoop():
                 globalVars.printBoardPosition(playerPositionBoard, False)
 
                 connectionManager.clientSendData("SHOOT_ACK_HIT")
+                connectionManager.clientSendData("SHOOT_SHIP_NDEST")
 
             elif playerPositionBoard[shootPoint[0]][shootPoint[1]] == "#":
                 connectionManager.clientSendData("SHOOT_ACK_MISS")
+                connectionManager.clientSendData("SHOOT_SHIP_NDEST")
 
             elif playerPositionBoard[shootPoint[0]][shootPoint[1]] == " ":
                 playerPositionBoard[shootPoint[0]][shootPoint[1]] = "#"
 
                 connectionManager.clientSendData("SHOOT_ACK_MISS")
+                connectionManager.clientSendData("SHOOT_SHIP_NDEST")
         elif data == "SHOOT_TURN_NEXT":
             os.system("cls")
 
@@ -195,6 +220,7 @@ def gameLoop():
 
                 connectionManager.clientSendData(f"SHOOT_TEST_{str(shootPoint[0]) + str(shootPoint[1])}")
                 hitMiss = connectionManager.clientReceiveData()
+                shipDestroyed = connectionManager.clientReceiveData()
 
                 if hitMiss == "SHOOT_ACK_HIT":
                     os.system("cls")
@@ -202,7 +228,11 @@ def gameLoop():
                     playerHitBoard[shootPoint[0]][shootPoint[1]] = "X"
 
                     print(globalVars.logoHit)
-                    print()                    
+                    print()
+
+                    if shipDestroyed == "SHOOT_SHIP_DEST":
+                        print(globalVars.enemyShipDestroyed)
+                        print()
                 elif hitMiss == "SHOOT_ACK_MISS":
                     os.system("cls")
 
