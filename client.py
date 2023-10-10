@@ -2,6 +2,7 @@ import connectionManager
 import globalVars
 import os
 import time
+import copy
 
 playerPositionBoard = [[" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
                          [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
@@ -75,6 +76,7 @@ def init(defaultShipPosition):
     global boardHitText
     global boardPositionText
     global shipCoords
+    global shipCoordsOrg
 
     os.system("cls")
 
@@ -127,8 +129,10 @@ def init(defaultShipPosition):
                                [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
                                ["+", " ", "+", " ", "+", " ", "+", " ", " ", " "]]
         shipCoords = {"4": [["A1", "B1", "C1", "D1"]], "3": [["F1", "G1", "H1"], ["F3", "G3", "H3"]], "2": [["A3", "B3"], ["A5", "B5"], ["A7", "B7"]], "1": [["J1"], ["J3"], ["J5"], ["J7"]]}
+        shipCoordsOrg = {"4": [["A1", "B1", "C1", "D1"]], "3": [["F1", "G1", "H1"], ["F3", "G3", "H3"]], "2": [["A3", "B3"], ["A5", "B5"], ["A7", "B7"]], "1": [["J1"], ["J3"], ["J5"], ["J7"]]}
     else:
         playerPositionBoard, shipCoords = setupShips()
+        shipCoordsOrg = copy.deepcopy(shipCoords)
 
     print("Waiting for ther person...")
     connectionManager.requestSyncC()
@@ -142,6 +146,8 @@ def init(defaultShipPosition):
     gameLoop()
 
 def gameLoop():
+    global playerHitBoard
+
     while True:
         #os.system("cls")
 
@@ -179,7 +185,14 @@ def gameLoop():
                             shipCoords[shipLenght][shipIndex].remove(coordsShootPoint)
 
                             if len(shipCoords[shipLenght][shipIndex]) == 0:
-                                shipDestroyed = "SHOOT_SHIP_DEST"
+                                orgShootPoint = [str(letterSet.index(shipCoordsOrg[shipLenght][shipIndex][0][0])), str(int(shipCoordsOrg[shipLenght][shipIndex][0][1]) - 1)]
+                                if shipLenght == "1":
+                                    shipRotation = "h"
+                                elif shipCoordsOrg[shipLenght][shipIndex][0][0] == shipCoordsOrg[shipLenght][shipIndex][1][0]:
+                                    shipRotation = "h"
+                                elif shipCoordsOrg[shipLenght][shipIndex][0][1] == shipCoordsOrg[shipLenght][shipIndex][1][1]:
+                                    shipRotation = "v"
+                                shipDestroyed = f"SHOOT_SHIP_DEST_{''.join(orgShootPoint)}_{shipLenght}_{shipRotation}"
 
                 connectionManager.clientSendData("SHOOT_ACK_HIT")
                 connectionManager.clientSendData(shipDestroyed)
@@ -230,9 +243,19 @@ def gameLoop():
                     print(globalVars.logoHit)
                     print()
 
-                    if shipDestroyed == "SHOOT_SHIP_DEST":
+                    if shipDestroyed.startswith("SHOOT_SHIP_DEST"):
+                        shipDestroyed = shipDestroyed.split("_")
+                        destroyedShipOrg = shipDestroyed[3]
+                        destroyedShipOrg = list(destroyedShipOrg)
+                        destroyedShipOrg = [int(destroyedShipOrg[0]), int(destroyedShipOrg[1])]
+                        destroyedShipLength = shipDestroyed[4]
+                        destroyedShipLength = int(destroyedShipLength)
+                        destroyedShipRotation = shipDestroyed[5]
+
                         print(globalVars.enemyShipDestroyed)
                         print()
+
+                        playerHitBoard = globalVars.shipDestroyedSurroundBlank(playerHitBoard, destroyedShipOrg, destroyedShipLength, destroyedShipRotation)
                 elif hitMiss == "SHOOT_ACK_MISS":
                     os.system("cls")
 
