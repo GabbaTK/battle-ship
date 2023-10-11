@@ -232,3 +232,12 @@ def shipDestroyedSurroundBlank(board, org, lenght, rotation):
                         board[y][x] = "#"
 
     return board
+
+def checkGameWon(board):
+    notWon = False
+    for y in board:
+        for x in y:
+            if x == "+":
+                notWon = True
+
+    return not notWon

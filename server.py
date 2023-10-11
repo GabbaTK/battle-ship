@@ -150,6 +150,10 @@ def gameLoop(dev, playerConnection):
             shipDestroyed = connectionManager.serverReceiveData(playerConnection)
 
             os.system("cls")
+
+            if shipDestroyed == "GAME_WIN":
+                    print(globalVars.youWin)
+                    exit()
             
             if hitMiss == "SHOOT_ACK_HIT":
                 os.system("cls")
@@ -227,14 +231,22 @@ def gameLoop(dev, playerConnection):
                             shipCoords[shipLenght][shipIndex].remove(coordsShootPoint)
 
                             if len(shipCoords[shipLenght][shipIndex]) == 0:
-                                orgShootPoint = [str(letterSet.index(shipCoordsOrg[shipLenght][shipIndex][0][0])), str(int(shipCoordsOrg[shipLenght][shipIndex][0][1]) - 1)]
-                                if shipLenght == "1":
-                                    shipRotation = "h"
-                                elif shipCoordsOrg[shipLenght][shipIndex][0][0] == shipCoordsOrg[shipLenght][shipIndex][1][0]:
-                                    shipRotation = "h"
-                                elif shipCoordsOrg[shipLenght][shipIndex][0][1] == shipCoordsOrg[shipLenght][shipIndex][1][1]:
-                                    shipRotation = "v"
-                                shipDestroyed = f"SHOOT_SHIP_DEST_{''.join(orgShootPoint)}_{shipLenght}_{shipRotation}"
+                                gameWon = globalVars.checkGameWon(serverPositionBoard)
+                                if gameWon:
+                                    connectionManager.serverSendData(playerConnection, "SHOOT_ACK_HIT")
+                                    connectionManager.serverSendData(playerConnection, "GAME_WIN")
+                                    os.system("cls")
+                                    print(globalVars.youLose)
+                                    exit()
+                                else:
+                                    orgShootPoint = [str(letterSet.index(shipCoordsOrg[shipLenght][shipIndex][0][0])), str(int(shipCoordsOrg[shipLenght][shipIndex][0][1]) - 1)]
+                                    if shipLenght == "1":
+                                        shipRotation = "h"
+                                    elif shipCoordsOrg[shipLenght][shipIndex][0][0] == shipCoordsOrg[shipLenght][shipIndex][1][0]:
+                                        shipRotation = "h"
+                                    elif shipCoordsOrg[shipLenght][shipIndex][0][1] == shipCoordsOrg[shipLenght][shipIndex][1][1]:
+                                        shipRotation = "v"
+                                    shipDestroyed = f"SHOOT_SHIP_DEST_{''.join(orgShootPoint)}_{shipLenght}_{shipRotation}"
 
                 connectionManager.serverSendData(playerConnection, "SHOOT_ACK_HIT")
                 connectionManager.serverSendData(playerConnection, shipDestroyed)
